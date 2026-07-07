@@ -117,18 +117,18 @@ if ! ensure_brew; then
 fi
 
 # Count steps for the [i/N] progress labels.
-TOTAL=2               # node + claude
+TOTAL=3               # node + git + claude
 $SKIP_PYTHON || TOTAL=$((TOTAL + 1))
-command -v git >/dev/null 2>&1 || TOTAL=$((TOTAL + 1))
 
 STEP=0
 STEP=$((STEP + 1)); brew_install node   "Node.js"            "$STEP" "$TOTAL"
 if ! $SKIP_PYTHON; then STEP=$((STEP + 1)); brew_install python "Python (latest 3.x)" "$STEP" "$TOTAL"; fi
-# git usually ships with the Xcode CLT that Homebrew installs — confirm or install.
+# git usually ships with the Xcode CLT that Homebrew installs — count it either way.
+STEP=$((STEP + 1))
 if command -v git >/dev/null 2>&1; then
-  ok "Git is already installed ($(command -v git))."
+  ok "[$STEP/$TOTAL] Git is already installed ($(command -v git))."
 else
-  STEP=$((STEP + 1)); brew_install git "Git" "$STEP" "$TOTAL"
+  brew_install git "Git" "$STEP" "$TOTAL"
 fi
 STEP=$((STEP + 1)); install_claude "$STEP" "$TOTAL"
 
